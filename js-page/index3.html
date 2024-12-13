@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Product</title>
+    <style>
+	* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 10px 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+header nav a {
+    margin: 0 15px;
+    color: white;
+    text-decoration: none;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+
+.section {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#section1 {
+    background-color: #3498db;
+}
+
+#section2 {
+    background-color: #2ecc71;
+}
+
+#section3 {
+    background-color: #f39c12;
+}
+
+#section4 {
+    background-color: #e74c3c;
+}
+
+#section5 {
+    background-color: #8e44ad;
+}
+
+#section6 {
+    background-color: #34495e;
+}
+
+.content {
+    text-align: center;
+    color: white;
+}
+
+h1, h2, h3 {
+    margin-bottom: 20px;
+}
+
+ul {
+    list-style: none;
+}
+
+ul li {
+    margin: 10px 0;
+}
+
+.middle-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+}
+
+.middle-content.reverse {
+    flex-direction: row-reverse;
+}
+
+.middle-content .text {
+    flex: 1;
+    padding: 20px;
+}
+
+.middle-content .image {
+    flex: 1;
+    text-align: center;
+}
+
+.middle-content .image img {
+    max-width: 100%;
+    height: auto;
+}
+
+.social-media a {
+    margin: 0 10px;
+    color: white;
+    text-decoration: none;
+}
+
+.social-media a:hover {
+    text-decoration: underline;
+}
+
+	</style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>Our Company</h1>
+            <nav>
+                <a href="#section1">Home</a>
+                <a href="#section2">About</a>
+                <a href="#section3">Services</a>
+                <a href="#section4">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="section" id="section1">
+        <div class="content">
+            <h1>Logo</h1>
+            <p>Contact Us</p>
+        </div>
+    </div>
+
+    <div class="section" id="section2">
+        <div class="content">
+            <h2>About Us</h2>
+            <p>We are a company that does amazing things!</p>
+        </div>
+    </div>
+
+    <div class="section" id="section3">
+        <div class="content">
+            <h2>Our Services</h2>
+            <ul>
+                <li>Web Design</li>
+                <li>Development</li>
+                <li>Consulting</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Middle Section with Image and Content Swap -->
+    <div class="section" id="section4">
+        <div class="middle-content">
+            <div class="image">
+                <img src="https://via.placeholder.com/400" alt="Product Image">
+            </div>
+            <div class="text">
+                <h3>Our Product</h3>
+                <p>Description of the product goes here. This is an amazing product that provides great value.</p>
+                <h4>Product Specifications:</h4>
+                <ul>
+                    <li>Feature 1</li>
+                    <li>Feature 2</li>
+                    <li>Feature 3</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Swap Image and Content -->
+    <div class="section" id="section5">
+        <div class="middle-content reverse">
+            <div class="text">
+                <h3>Our Product</h3>
+                <p>Description of the product goes here. This is an amazing product that provides great value.</p>
+                <h4>Product Specifications:</h4>
+                <ul>
+                    <li>Feature 1</li>
+                    <li>Feature 2</li>
+                    <li>Feature 3</li>
+                </ul>
+            </div>
+            <div class="image">
+                <img src="https://via.placeholder.com/400" alt="Product Image">
+            </div>
+        </div>
+    </div>
+
+    <div class="section" id="section6">
+        <div class="content">
+            <div class="social-media">
+                <a href="#">Facebook</a>
+                <a href="#">Twitter</a>
+                <a href="#">Instagram</a>
+            </div>
+            <p>&copy; 2024 Our Company. All rights reserved.</p>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Our Company. All rights reserved.</p>
+    </footer>
+
+    <script>
+	const sections = document.querySelectorAll('.section');
+let currentSection = 0;
+
+window.addEventListener('wheel', function (event) {
+    if (event.deltaY > 0) {
+        if (currentSection < sections.length - 1) {
+            currentSection++;
+        }
+    } else {
+        if (currentSection > 0) {
+            currentSection--;
+        }
+    }
+
+    scrollToSection(currentSection);
+});
+
+function scrollToSection(sectionIndex) {
+    window.scrollTo({
+        top: sections[sectionIndex].offsetTop,
+        behavior: 'smooth'
+    });
+}
+
+	</script>
+</body>
+</html>

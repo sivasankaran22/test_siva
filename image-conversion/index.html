@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixiJS Cartoon Effect</title>
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
+</head>
+<body>
+    <h1>PixiJS Cartoon Effect</h1>
+    <input type="file" id="upload" accept="image/*">
+    <canvas id="canvas"></canvas>
+    <script>
+        let app = new PIXI.Application({width: 800, height: 600});
+        document.body.appendChild(app.view);
+
+        document.getElementById('upload').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const img = new Image();
+                img.src = e.target.result;
+                
+                img.onload = function() {
+                    let texture = PIXI.Texture.from(img);
+                    let sprite = new PIXI.Sprite(texture);
+                    sprite.x = app.view.width / 2 - sprite.width / 2;
+                    sprite.y = app.view.height / 2 - sprite.height / 2;
+                    app.stage.addChild(sprite);
+                    
+                    // Apply a cartoon filter using a PixiJS filter
+                    sprite.filters = [new PIXI.filters.ColorMatrixFilter()];
+                    sprite.filters[0].saturate(1.2);  // Increase saturation for bright colors
+                    sprite.filters[0].contrast(2);   // Increase contrast for a more cartoony feel
+                }
+            };
+            
+            reader.readAsDataURL(file);
+        });
+    </script>
+</body>
+</html>

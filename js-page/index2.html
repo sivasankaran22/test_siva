@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll Sections</title>
+    <style>
+	* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+}
+
+.section {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+#section1 {
+    background-color: #3498db;
+}
+
+#section2 {
+    background-color: #2ecc71;
+}
+
+#section3 {
+    background-color: #f39c12;
+}
+
+#section4 {
+    background-color: #e74c3c;
+}
+
+#section5 {
+    background-color: #8e44ad;
+    flex-direction: column;
+    align-items: center;
+}
+
+.content {
+    text-align: center;
+    color: white;
+}
+
+h1, h2 {
+    margin-bottom: 20px;
+}
+
+ul {
+    list-style: none;
+}
+
+ul li {
+    margin: 10px 0;
+}
+
+.social-media a {
+    margin: 0 10px;
+    color: white;
+    text-decoration: none;
+}
+
+.social-media a:hover {
+    text-decoration: underline;
+}
+
+	</style>
+</head>
+<body>
+    <div class="section" id="section1">
+        <div class="content">
+            <h1>Logo</h1>
+            <p>Contact Us</p>
+        </div>
+    </div>
+    <div class="section" id="section2">
+        <div class="content">
+            <h2>About Us</h2>
+            <p>We are a company that does amazing things!</p>
+        </div>
+    </div>
+    <div class="section" id="section3">
+        <div class="content">
+            <h2>Our Services</h2>
+            <ul>
+                <li>Web Design</li>
+                <li>Development</li>
+                <li>Consulting</li>
+            </ul>
+        </div>
+    </div>
+    <div class="section" id="section4">
+        <div class="content">
+            <h2>Contact Us</h2>
+            <p>Reach us at contact@ourcompany.com</p>
+        </div>
+    </div>
+    <div class="section" id="section5">
+        <div class="content">
+            <div class="social-media">
+                <a href="#">Facebook</a>
+                <a href="#">Twitter</a>
+                <a href="#">Instagram</a>
+            </div>
+            <p>&copy; 2024 Our Company. All rights reserved.</p>
+        </div>
+    </div>
+    <script>
+	const sections = document.querySelectorAll('.section');
+let currentSection = 0;
+
+window.addEventListener('wheel', function (event) {
+    if (event.deltaY > 0) {
+        if (currentSection < sections.length - 1) {
+            currentSection++;
+        }
+    } else {
+        if (currentSection > 0) {
+            currentSection--;
+        }
+    }
+
+    scrollToSection(currentSection);
+});
+
+function scrollToSection(sectionIndex) {
+    window.scrollTo({
+        top: sections[sectionIndex].offsetTop,
+        behavior: 'smooth'
+    });
+}
+
+	</script>
+</body>
+</html>
