@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Cube Image Slider</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .cube-container {
+            perspective: 1200px;
+            width: 500px;
+            height: 500px;
+            position: relative;
+        }
+
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            transform-style: preserve-3d;
+            animation: spin 20s infinite linear;
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid #fff;
+        }
+
+        .front { transform: rotateY(0deg) translateZ(250px); }
+        .back { transform: rotateY(180deg) translateZ(250px); }
+        .left { transform: rotateY(-90deg) translateZ(250px); }
+        .right { transform: rotateY(90deg) translateZ(250px); }
+        .top { transform: rotateX(90deg) translateZ(250px); }
+        .bottom { transform: rotateX(-90deg) translateZ(250px); }
+
+        @keyframes spin {
+            from {
+                transform: rotateY(0deg);
+            }
+            to {
+                transform: rotateY(360deg);
+            }
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            width: 500px;
+        }
+
+        .navigation button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .navigation button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .navigation button:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="cube-container">
+        <div class="cube" id="cube">
+            <div class="cube-face front"></div>
+            <div class="cube-face back"></div>
+            <div class="cube-face left"></div>
+            <div class="cube-face right"></div>
+            <div class="cube-face top"></div>
+            <div class="cube-face bottom"></div>
+        </div>
+        <!--div class="navigation">
+            <button id="prevButton">Previous</button>
+            <button id="nextButton">Next</button>
+        </div-->
+    </div>
+
+    <script>
+        const images = [
+            './images/001.png',
+            './images/002.png',
+            './images/003.png',
+            './images/004.png',
+            './images/005.png',
+            './images/006.png',
+            './images/007.png',
+            './images/008.png',
+            './images/009.png',
+            './images/010.png',
+            './images/011.png'
+        ];
+
+        const faces = ['front', 'back', 'left', 'right', 'top', 'bottom'];
+        const cube = document.getElementById('cube');
+        let currentIndex = 0;
+
+        function updateCube() {
+            faces.forEach((face, i) => {
+                const faceElement = document.querySelector(`.cube-face.${face}`);
+                const imageIndex = (currentIndex + i) % images.length;
+                faceElement.style.backgroundImage = `url('${images[imageIndex]}')`;
+            });
+        }
+
+/*        document.getElementById('prevButton').addEventListener('click', () => {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            updateCube();
+        });
+
+        document.getElementById('nextButton').addEventListener('click', () => {
+            currentIndex = (currentIndex + 1) % images.length;
+            updateCube();
+        }); */
+
+        // Initial render
+        updateCube();
+    </script>
+</body>
+</html>
