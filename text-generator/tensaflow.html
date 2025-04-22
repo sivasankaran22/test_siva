@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Generation with TensorFlow.js</title>
+
+    <!-- Include TensorFlow.js from the CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+</head>
+<body>
+    <h1>Text Generation Example with TensorFlow.js</h1>
+    <textarea id="generatedText" rows="10" cols="50"></textarea><br>
+    <button onclick="generateText()">Generate Text</button>
+
+    <script>
+        async function generateText() {
+            // Define the LSTM model
+            const model = tf.sequential();
+            model.add(tf.layers.lstm({ units: 128, inputShape: [1, 1], returnSequences: true }));
+            model.add(tf.layers.lstm({ units: 128 }));
+            model.add(tf.layers.dense({ units: 1, activation: 'linear' }));
+
+            model.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
+
+            // Example training data (you can use real word data here)
+            const inputText = "hello world, how are you today?";
+            const uniqueChars = Array.from(new Set(inputText));  // Unique characters in the text
+            const charToIndex = {};
+            const indexToChar = {};
+
+            uniqueChars.forEach((char, index) => {
+                charToIndex[char] = index;
+                indexToChar[index] = char;
+            });
+
+            // Encode the input text into a sequence of indices
+            const encodedInput = inputText.split('').map(char => charToIndex[char]);
+
+            // Convert the input text into a tensor
+            const xs = tf.tensor2d([encodedInput], [1, encodedInput.length, 1]);
+
+            // Create a simple dummy target for training (predicting the next character)
+            const ys = tf.tensor2d([encodedInput.slice(1).concat([0])], [1, encodedInput.length]);
+
+            // Train the model
+            await model.fit(xs, ys, { epochs: 100 });
+
+            // Now, generate new text
+            let generatedText = inputText;  // Starting point
+            let currentSequence = encodedInput.slice(-1);
+
+            for (let i = 0; i < 100; i++) {  // Generate 100 characters
+                const inputTensor = tf.tensor2d([currentSequence], [1, 1, 1]);
+                const predictedIndex = model.predict(inputTensor).dataSync()[0];
+                const predictedChar = indexToChar[Math.round(predictedIndex)];
+
+                generatedText += predictedChar;
+                currentSequence = currentSequence.slice(1).concat([Math.round(predictedIndex)]);
+            }
+
+            document.getElementById("generatedText").value = generatedText;
+        }
+    </script>
+</body>
+</html>

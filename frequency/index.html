@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Frequency Detector</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        button { padding: 10px 20px; font-size: 16px; }
+        #frequency { font-size: 24px; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <h2>Live Sound Frequency Detector</h2>
+    <button onclick="startFrequencyDetection()">Start Detection</button>
+    <p id="frequency">Frequency: -- Hz</p>
+
+    <script>
+        let audioContext, analyser, microphone, dataArray;
+
+        async function startFrequencyDetection() {
+            try {
+                // Step 1: Get microphone input
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+                // Step 2: Create AudioContext
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                microphone = audioContext.createMediaStreamSource(stream);
+                analyser.fftSize = 2048;
+
+                // Step 3: Connect microphone to analyser
+                microphone.connect(analyser);
+
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+                detectFrequency();
+            } catch (error) {
+                alert("Microphone access denied. Please allow microphone permissions.");
+                console.error("Error accessing microphone:", error);
+            }
+        }
+
+        function detectFrequency() {
+            analyser.getByteFrequencyData(dataArray);
+            let maxIndex = 0;
+            let maxAmplitude = 0;
+
+            // Find the frequency with the highest amplitude
+            for (let i = 0; i < dataArray.length; i++) {
+                if (dataArray[i] > maxAmplitude) {
+                    maxAmplitude = dataArray[i];
+                    maxIndex = i;
+                }
+            }
+
+            // Convert index to frequency (approximate)
+            const sampleRate = audioContext.sampleRate;
+            const frequency = (maxIndex * sampleRate) / analyser.fftSize;
+
+            // Display frequency
+            document.getElementById("frequency").innerText = `Frequency: ${Math.round(frequency)} Hz`;
+
+            requestAnimationFrame(detectFrequency); // Continuously update
+        }
+    </script>
+
+</body>
+</html>

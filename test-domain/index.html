@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Check Page Availability</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 30px;
+    }
+    input {
+      padding: 8px;
+      width: 300px;
+    }
+    button {
+      padding: 8px 15px;
+      margin-left: 10px;
+    }
+    #message {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Check if URL is Available</h2>
+  <input type="text" id="urlInput" placeholder="Enter full URL (e.g. https://example.com/page)" />
+  <button onclick="checkAndRedirect()">Submit</button>
+
+  <div id="message"></div>
+
+  <script>
+    function checkAndRedirect() {
+      const url = document.getElementById("urlInput").value.trim();
+      const message = document.getElementById("message");
+
+      if (!url.startsWith("http")) {
+        message.textContent = "❌ Please enter a valid URL (include https://)";
+        return;
+      }
+
+      message.textContent = "🔄 Checking...";
+
+      fetch(url, { method: "HEAD" })
+        .then(response => {
+          if (response.ok) {
+            message.textContent = "✅ Page available. Redirecting...";
+            setTimeout(() => {
+              window.location.href = url;
+            }, 1000);
+          } else {
+            message.textContent = `❌ Page returned status ${response.status}`;
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          message.textContent = "❌ Page not reachable or blocked by CORS.";
+        });
+    }
+  </script>
+
+</body>
+</html>

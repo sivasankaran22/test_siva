@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag and Drop Website Builder</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            gap: 20px;
+        }
+        .toolbox {
+            width: 200px;
+            padding: 10px;
+            border: 2px dashed #aaa;
+        }
+        .toolbox div {
+            padding: 10px;
+            margin: 5px;
+            background-color: lightgray;
+            cursor: grab;
+        }
+        .canvas {
+            flex-grow: 1;
+            min-height: 400px;
+            border: 2px solid #000;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toolbox (Draggable Elements) -->
+    <div class="toolbox">
+        <div draggable="true" class="drag-item" data-type="text">Text</div>
+        <div draggable="true" class="drag-item" data-type="button">Button</div>
+        <div draggable="true" class="drag-item" data-type="image">Image</div>
+    </div>
+
+    <!-- Canvas (Drop Area) -->
+    <div class="canvas" id="canvas">
+        <p>Drop elements here</p>
+    </div>
+
+    <script>
+        // Drag and Drop Functionality
+        const items = document.querySelectorAll(".drag-item");
+        const canvas = document.getElementById("canvas");
+
+        items.forEach(item => {
+            item.addEventListener("dragstart", (event) => {
+                event.dataTransfer.setData("type", event.target.dataset.type);
+            });
+        });
+
+        canvas.addEventListener("dragover", (event) => {
+            event.preventDefault(); // Allow dropping
+        });
+
+        canvas.addEventListener("drop", (event) => {
+            event.preventDefault();
+            const type = event.dataTransfer.getData("type");
+
+            let newElement;
+            if (type === "text") {
+                newElement = document.createElement("p");
+                newElement.textContent = "Editable Text";
+            } else if (type === "button") {
+                newElement = document.createElement("button");
+                newElement.textContent = "Click Me";
+            } else if (type === "image") {
+                newElement = document.createElement("img");
+                newElement.src = "https://via.placeholder.com/100";
+                newElement.style.width = "100px";
+            }
+
+            if (newElement) {
+                newElement.setAttribute("contenteditable", "true");
+                newElement.style.margin = "10px";
+                newElement.style.cursor = "pointer";
+                newElement.addEventListener("click", () => newElement.focus());
+                canvas.appendChild(newElement);
+            }
+        });
+    </script>
+
+</body>
+</html>

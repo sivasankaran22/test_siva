@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Product Layout</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #f5f5f5; }
+        .container { display: flex; width: 100vw; height: 100vh; background: white; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+
+        /* Left Panel - Product List */
+        .product-list { width: 25%; padding: 20px; overflow-y: auto; background: #eee; }
+        .product-item { display: block; align-items: center; gap: 10px; margin: 10px 0; padding: 10px; border: solid 1px #c0c0c0; cursor: pointer; }
+        .product-item img { width: 100%; height: auto; object-fit: cover; }
+        .product-item:hover { background: #ddd; }
+
+        /* Middle Panel - Main Image */
+        .product-display { width: 50%; display: flex; justify-content: center; align-items: center; }
+        .product-display img { max-width: 90%; max-height: 90%; transition: 0.3s; }
+
+        /* Right Panel - Product Details */
+        .product-details { width: 25%; padding: 20px; background: #eee; }
+        .thumbnail-container { display: flex; gap: 10px; margin-top: 10px; }
+        .thumbnail { width: 60px; height: 60px; cursor: pointer; border: 1px solid #ccc; }
+        .thumbnail:hover { border-color: #000; }
+        .tags { margin-top: 10px; }
+        .tags span { background: #007BFF; color: white; padding: 5px; margin-right: 5px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Left: Product List -->
+        <div class="product-list" id="productList"></div>
+        
+        <!-- Middle: Main Product Display -->
+        <div class="product-display">
+            <img id="mainImage" src="" alt="Product Image">
+        </div>
+
+        <!-- Right: Product Details -->
+        <div class="product-details">
+            <h2 id="productTitle"></h2>
+            <p id="productPrice"></p>
+            <div class="thumbnail-container" id="thumbnails"></div>
+            <div class="tags" id="productTags"></div>
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            { id: 1, name: "Product A", price: "$100", image: "./images/001.png", angles: ["./images/001.png", "./images/002.png"], tags: ["New", "Trending", "Best Seller"] },
+            { id: 2, name: "Product B", price: "$150", image: "./images/003.png", angles: ["./images/003.png", "./images/004.png"], tags: ["Limited Edition", "Sale"] }
+        ];
+
+        const productList = document.getElementById("productList");
+        const mainImage = document.getElementById("mainImage");
+        const productTitle = document.getElementById("productTitle");
+        const productPrice = document.getElementById("productPrice");
+        const thumbnails = document.getElementById("thumbnails");
+        const productTags = document.getElementById("productTags");
+
+        function displayProduct(index) {
+            const product = products[index];
+            mainImage.src = product.image;
+            productTitle.textContent = product.name;
+            productPrice.textContent = product.price;
+            thumbnails.innerHTML = product.angles.map(angle => `<img class='thumbnail' src='${angle}' onclick='mainImage.src="${angle}"'>`).join('');
+            productTags.innerHTML = product.tags.map(tag => `<span>${tag}</span>`).join('');
+        }
+
+        productList.innerHTML = products.map((product, index) => `<div class='product-item' onclick='displayProduct(${index})'><img src='${product.image}'><span>${product.name} - ${product.price}</span></div>`).join('');
+
+        displayProduct(0); // Show first product by default
+    </script>
+</body>
+</html>

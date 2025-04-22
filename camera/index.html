@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Face-Controlled Game with Webcam</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/facemesh"></script>
+    <style>
+        body { text-align: center; background: #f4f4f4; margin: 0; overflow: hidden; }
+        video, canvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; }
+        #scoreBoard { 
+            position: absolute; top: 10px; left: 50%;
+            transform: translateX(-50%); font-size: 24px;
+            background: rgba(0, 0, 0, 0.5); color: white;
+            padding: 10px; border-radius: 5px; z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="scoreBoard">Score: <span id="score">0</span></div>
+    <video id="webcam" autoplay playsinline></video>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        const video = document.getElementById("webcam");
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let score = 0;
+        document.getElementById("score").innerText = score;
+
+        let playerX = canvas.width / 2;
+        let objects = [];
+        
+        const images = {
+            fruit: "./images/banana.png",
+            egg: "./images/egg.png"
+        };
+
+        async function setupCamera() {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+        }
+
+        async function loadFaceMesh() {
+            const model = await facemesh.load();
+            detectFace(model);
+        }
+
+        async function detectFace(model) {
+            setInterval(async () => {
+                const predictions = await model.estimateFaces(video);
+                if (predictions.length > 0) {
+                    let faceX = predictions[0].annotations.midwayBetweenEyes[0][0];
+                    playerX = (faceX / video.videoWidth) * canvas.width;
+                }
+            }, 100);
+        }
+
+        function spawnObject() {
+            let type = Math.random() < 0.7 ? "fruit" : "egg";
+            let obj = {
+                x: Math.random() * (canvas.width - 50),
+                y: -50,
+                width: 250,
+                height: 250,
+                speed: Math.random() * 3 + 2,
+                type: type,
+                img: new Image()
+            };
+            obj.img.src = images[type];
+            objects.push(obj);
+        }
+
+        function checkCollision(obj) {
+            return obj.x < playerX + 50 && obj.x + obj.width > playerX && obj.y + obj.height > canvas.height - 150;
+        }
+
+        function updateGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            objects.forEach((obj, index) => {
+                obj.y += obj.speed;
+                ctx.drawImage(obj.img, obj.x, obj.y, obj.width, obj.height);
+
+                if (checkCollision(obj)) {
+                    score += obj.type === "fruit" ? 1 : -1;
+                    document.getElementById("score").innerText = score;
+                    objects.splice(index, 1);
+                }
+
+                if (obj.y > canvas.height) objects.splice(index, 1);
+            });
+
+            requestAnimationFrame(updateGame);
+        }
+
+        setupCamera().then(loadFaceMesh);
+        setInterval(spawnObject, 10000);
+        updateGame();
+    </script>
+</body>
+</html>

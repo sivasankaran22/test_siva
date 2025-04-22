@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fabric.js Image Zoom and Select</title>
+    <script src="./fabric.js"></script>
+    <style>
+        /* Basic styles for the canvas and thumbnail section */
+        #canvas-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        #thumbnail-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .thumbnail {
+            margin: 5px;
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            object-fit: cover;
+        }
+        canvas {
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Fabric.js Image Zoom and Select</h1>
+    
+    <div id="canvas-container">
+        <!-- Fabric.js Canvas -->
+        <canvas id="canvas"></canvas>
+    </div>
+
+    <div id="thumbnail-container">
+        <!-- Thumbnails -->
+        <img src="images/image-1.jpg" alt="Thumbnail 1" class="thumbnail" onclick="changeImage('images/image-1.jpg')">
+        <img src="images/image-2.jpg" alt="Thumbnail 2" class="thumbnail" onclick="changeImage('images/image-2.jpg')">
+        <img src="images/image-3.jpg" alt="Thumbnail 3" class="thumbnail" onclick="changeImage('images/image-3.jpg')">
+    </div>
+
+    <script>
+        // Create the Fabric.js canvas
+        const canvas = new fabric.Canvas('canvas', {
+            selection: true,  // Allow object selection
+            preserveObjectStacking: true, // Prevent object stacking order from changing
+            width: window.innerWidth,  // Set canvas to fit window size
+            height: window.innerHeight // Set canvas to fit window size
+        });
+
+        let fabricImage;
+        let imgElement;
+
+        // Function to change the image in the canvas when a thumbnail is clicked
+        function changeImage(imageSrc) {
+            imgElement = new Image();
+            imgElement.src = imageSrc;
+
+            imgElement.onload = function() {
+                // Clear the canvas before adding new image
+                canvas.clear();
+
+                // Set canvas width and height based on image size, but adjust to fit the screen
+                const canvasWidth = imgElement.width;
+                const canvasHeight = imgElement.height;
+
+                const imgAspectRatio = imgElement.width / imgElement.height;
+                const canvasAspectRatio = canvasWidth / canvasHeight;
+
+                let scaleX, scaleY;
+
+                // Fit the image to the canvas while maintaining aspect ratio
+                if (imgAspectRatio > canvasAspectRatio) {
+                    // Image is wider than canvas, scale by width
+                    scaleX = canvasWidth / imgElement.width;
+                    scaleY = scaleX;
+                } else {
+                    // Image is taller than canvas, scale by height
+                    scaleY = canvasHeight / imgElement.height;
+                    scaleX = scaleY;
+                }
+
+                // Set the canvas size to fit the window
+                canvas.setWidth(canvasWidth);
+                canvas.setHeight(canvasHeight);
+
+                // Create a Fabric image object
+                fabricImage = new fabric.Image(imgElement, {
+                    left: canvasWidth / 2,
+                    top: canvasHeight / 2,
+                    originX: 'center',
+                    originY: 'center',
+                    scaleX: scaleX,
+                    scaleY: scaleY
+                });
+
+                // Add the image to the canvas
+                canvas.add(fabricImage);
+                canvas.renderAll();
+            };
+        }
+
+        // Enable zoom functionality using Fabric.js
+        canvas.on('mouse:wheel', function(opt) {
+            const delta = opt.e.deltaY;
+            let zoom = canvas.getZoom();
+            zoom = zoom * 0.999 ** delta;
+
+            // Set zoom limits to prevent zooming too far out or in
+            zoom = Math.min(Math.max(zoom, 0.2), 3);
+
+            // Apply the zoom to the canvas
+            canvas.setZoom(zoom);
+
+            // Scale the image as per the zoom level
+            if (fabricImage) {
+                fabricImage.set({
+                    scaleX: (window.innerWidth / imgElement.width) * zoom,
+                    scaleY: (window.innerHeight / imgElement.height) * zoom
+                });
+            }
+
+            opt.e.preventDefault();
+            opt.e.stopPropagation();
+        });
+
+        // Enable object selection on canvas
+        canvas.on('object:selected', function(e) {
+            const selectedObject = e.target;
+            console.log('Object selected:', selectedObject);
+        });
+
+        // Load initial image (optional)
+        changeImage('images/image-1.jpg'); // Load the first image by default
+    </script>
+</body>
+</html>

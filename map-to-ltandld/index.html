@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Maps URL to Lat/Lng</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+        input, button { padding: 10px; font-size: 16px; margin: 10px; }
+        #result { font-size: 18px; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <h2>Convert Google Maps Short URL to Latitude & Longitude</h2>
+
+    <input type="text" id="shortUrl" placeholder="Enter Google Maps Short URL" size="50">
+    <button onclick="convertUrl()">Get Coordinates</button>
+
+    <p id="result"></p>
+
+    <script>
+        async function getLatLongFromShortUrl(shortUrl) {
+    try {
+        // Step 1: Get the expanded URL from our backend
+        const response = await fetch(`http://localhost:3001/expand-url?url=${encodeURIComponent(shortUrl)}`);
+        const data = await response.json();
+        const longUrl = data.expandedUrl;
+
+        // Step 2: Extract latitude & longitude
+        const matches = longUrl.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+        if (matches) {
+            const latitude = parseFloat(matches[1]);
+            const longitude = parseFloat(matches[2]);
+            document.getElementById("result").innerHTML = 
+                `Latitude: ${latitude}, Longitude: ${longitude}`;
+        } else {
+            document.getElementById("result").innerHTML = "Coordinates not found.";
+        }
+    } catch (error) {
+        document.getElementById("result").innerHTML = "Error fetching URL.";
+        console.error("Error expanding URL:", error);
+    }
+}
+
+
+        function convertUrl() {
+            const shortUrl = document.getElementById("shortUrl").value;
+            if (shortUrl) {
+                getLatLongFromShortUrl(shortUrl);
+            } else {
+                document.getElementById("result").innerHTML = "Please enter a valid URL.";
+            }
+        }
+    </script>
+
+</body>
+</html>

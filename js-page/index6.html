@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full-Screen Film Roll Product Slider</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            height: 100vh; background: #111; color: white; font-family: Arial, sans-serif; 
+            overflow: hidden;
+        }
+
+        .slider-container {
+            width: 100vw; height: 100vh; 
+            display: flex; justify-content: center; align-items: center; position: relative;
+        }
+
+        .film-roll {
+            display: flex; gap: 20px; width: 100%; 
+            justify-content: center; align-items: center; 
+            overflow: hidden;
+        }
+
+        .product {
+            width: 200px; height: 300px; border-radius: 10px; transition: transform 0.5s, opacity 0.5s;
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+            background-size: cover; background-position: center;
+            position: relative; opacity: 0.6;
+        }
+
+        /* Active (center) product styling */
+        .active {
+            transform: scale(2.0); /* Larger zoom effect */
+            opacity: 1;
+        }
+
+        .product-info {
+            position: absolute; bottom: 0; width: 100%;
+            background: rgba(0, 0, 0, 0.7); color: white; text-align: center;
+            padding: 15px; font-size: 20px; border-radius: 0 0 10px 10px;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .active .product-info { opacity: 1; }
+
+        /* Buttons */
+        .controls {
+            position: absolute; top: 50%; width: 100%;
+            display: flex; justify-content: space-between;
+            transform: translateY(-50%);
+        }
+
+        .btn {
+            background: rgba(255, 255, 255, 0.3); color: white; padding: 20px;
+            border: none; border-radius: 50%; cursor: pointer; font-size: 30px;
+            transition: background 0.3s;
+        }
+
+        .btn:hover { background: rgba(255, 255, 255, 0.6); }
+
+    </style>
+</head>
+<body>
+
+    <div class="slider-container">
+        <div class="controls">
+            <button class="btn" onclick="prevSlide()">&#9665;</button>
+            <button class="btn" onclick="nextSlide()">&#9655;</button>
+        </div>
+        <div class="film-roll" id="filmRoll">
+            <!-- Products will be inserted dynamically -->
+        </div>
+    </div>
+
+    <script>
+        const products = [
+            { name: "Product 1", price: "$100", image: "./images/001.png" },
+            { name: "Product 2", price: "$150", image: "./images/002.png" },
+            { name: "Product 3", price: "$200", image: "./images/003.png" },
+            { name: "Product 4", price: "$250", image: "./images/004.png" },
+            { name: "Product 5", price: "$300", image: "./images/005.png" }
+        ];
+
+        const filmRoll = document.getElementById("filmRoll");
+        let currentIndex = 0;
+
+        function createFilmRoll() {
+            products.forEach((product, index) => {
+                const div = document.createElement("div");
+                div.classList.add("product");
+                div.style.backgroundImage = `url('${product.image}')`;
+
+                const info = document.createElement("div");
+                info.classList.add("product-info");
+                info.innerHTML = `<strong>${product.name}</strong><br>${product.price}`;
+
+                div.appendChild(info);
+                filmRoll.appendChild(div);
+            });
+
+            updateFilmRoll();
+        }
+
+        function updateFilmRoll() {
+            const productDivs = document.querySelectorAll(".product");
+            productDivs.forEach((div, index) => {
+                if (index === currentIndex) {
+                    div.classList.add("active");
+                } else {
+                    div.classList.remove("active");
+                }
+            });
+        }
+
+        function nextSlide() {
+            currentIndex = (currentIndex + 1) % products.length;
+            updateFilmRoll();
+        }
+
+        function prevSlide() {
+            currentIndex = (currentIndex - 1 + products.length) % products.length;
+            updateFilmRoll();
+        }
+
+        // Auto-slide every 4 seconds
+        setInterval(() => {
+            nextSlide();
+        }, 4000);
+
+        createFilmRoll();
+    </script>
+
+</body>
+</html>

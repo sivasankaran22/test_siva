@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SortableJS Example</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h2>Sortable To-Do List</h2>
+    
+    <div class="container">
+        <input type="text" id="new-item" placeholder="Add new item..." />
+        <button onclick="addItem()">Add Item</button>
+        <button onclick="resetList()">Reset</button>
+    </div>
+
+    <ul id="sortable-list">
+        <li>Task 1 <span class="delete-btn">❌</span></li>
+        <li>Task 2 <span class="delete-btn">❌</span></li>
+        <li>Task 3 <span class="delete-btn">❌</span></li>
+    </ul>
+
+    <script src="script.js"></script>
+</body>
+</html>

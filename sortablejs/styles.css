@@ -1,0 +1,43 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f7f7f7;
+    padding: 20px;
+}
+
+.container {
+    margin-bottom: 20px;
+}
+
+input, button {
+    padding: 8px;
+    font-size: 16px;
+}
+
+#sortable-list {
+    list-style-type: none;
+    padding: 0;
+    max-width: 300px;
+    margin: auto;
+}
+
+#sortable-list li {
+    padding: 10px;
+    background-color: white;
+    border: 1px solid #ccc;
+    margin-bottom: 5px;
+    cursor: grab;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.delete-btn {
+    cursor: pointer;
+    color: red;
+}
+
+.ghost {
+    opacity: 0.5;
+    background: lightgray;
+}
